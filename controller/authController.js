@@ -1,13 +1,13 @@
-const { users } = require('../models/users');
+const { User } = require('../models/users');
 const generateToken = require('../config/generateToken');
 const { comparePassword, hashPassword } = require('../config/bcrypt');
-const { errorResponse, successResponse, validationErrorResponse, internalErrorResponse, notFoundResponse } = require('../config/response');
+const { errorResponse, successResponse, validationErrorResponse, internalErrorResponse, notFoundResponse } = require('../config/responseJson');
 const { users } = require('../models');
 
 // register controller
 async function register(req, res) {
     try {
-        const { username, email, password } = req.body;
+        const { name, email, password } = req.body;
         // Check if user already exists
         const existingUser = await users.findOne({ where: { email } });
         if (existingUser) errorResponse(res, 'User already exists', 400);
@@ -17,14 +17,14 @@ async function register(req, res) {
 
         // Create new user
         const newUser = await users.create({
-            username,
+            name,
             email,
             password: hashedPassword
         });
 
         const userResponse = {
             id: newUser.id,
-            username: newUser.username,
+            name: newUser.name,
             email: newUser.email,
             createdAt: newUser.createdAt,
             updatedAt: newUser.updatedAt
@@ -54,7 +54,7 @@ async function login(req, res) {
 
         const userResponse = {
             id: user.id,
-            username: user.username,
+            name: user.name,
             email: user.email,
         };
 
@@ -72,7 +72,7 @@ async function login(req, res) {
 async function me(req, res) {
     try {
         const user = await users.findByPk(req.user.id, {
-            attributes: ['id', 'username', 'email']
+            attributes: ['id', 'name', 'email']
         });
         if (!user) {
             errorResponse(res, 'User not found', 404);
@@ -97,5 +97,5 @@ module.exports = {
     register,
     login,
     me,
-    logout,
+    logout
 }

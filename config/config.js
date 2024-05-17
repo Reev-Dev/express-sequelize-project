@@ -29,5 +29,4 @@ module.exports = {
     "host": DB_HOSTNAME,
     "dialect": DB_DIALECT
   }
-}
-  ;
+};
